@@ -27,6 +27,7 @@ public class NetworkMain {
 				
 				if ("QUIT".equalsIgnoreCase(command)) {
 					System.out.println("Successfully Signed Off. Bye !");
+					break;
 				} else {
 					String status = network.runCommand(command, commNetwork);
 					System.out.println(status);
