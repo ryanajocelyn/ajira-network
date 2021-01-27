@@ -33,5 +33,6 @@ public class Constants {
 	public static final String ERROR_CANNOT_SET_STRENGTH_TO_REPEATER = "Error: Cannot set Strength to Repeater";
 	public static final String ERROR_NODE_DOESNOT_EXIST_STRENGTH = "Error: Node %s does not exist !!";
 	public static final String ERROR_ROUTE_NOT_FOUND = "Error: Route not found !!";
+	public static final String ERROR_ROUTE_CANNOT_BE_CALCULATED = "Error: Route cannot be calculated with a repeater !!";
 
 }

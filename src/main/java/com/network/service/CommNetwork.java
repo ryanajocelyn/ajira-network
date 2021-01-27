@@ -100,21 +100,17 @@ public class CommNetwork {
 	 * @return
 	 */
 	public String infoRoute(String nodeName1, String nodeName2) {
-		List<Node> connections1 = this.network.get(nodeName1);
-		List<Node> connections2 = this.network.get(nodeName2);
-		
-		// Return if no Direct Routes found
-		if (connections1.isEmpty() || connections2.isEmpty()) {
-			return Constants.ERROR_ROUTE_NOT_FOUND;
-		}
-
 		Node startNode = this.nodes.get(nodeName1);
-
+		Node endNode = this.nodes.get(nodeName2);
+		
+		String error = canCalculateRoute(nodeName1, nodeName2);
+		if (error != null) {
+			return error;
+		}
+		
 		List<String> visitedNodes = new ArrayList<String>();
 		Stack<Node> infoRoutes = new Stack<Node>();
 		Stack<Node> infoRoutesPath = new Stack<Node>();
-		
-		Node endNode = this.nodes.get(nodeName2);
 		
 		// Search the network for a path
 		infoRouteDFS(infoRoutesPath, infoRoutes, visitedNodes, startNode, endNode , 
@@ -130,6 +126,33 @@ public class CommNetwork {
 		routePath = "".equalsIgnoreCase(routePath)? Constants.ERROR_ROUTE_NOT_FOUND : routePath;
 				
 		return routePath;
+	}
+
+	/**
+	 * @param nodeName1
+	 * @param nodeName2
+	 * @param startNode
+	 * @param endNode
+	 * @return 
+	 */
+	private String canCalculateRoute(String nodeName1, String nodeName2) {
+		List<Node> connections1 = this.network.get(nodeName1);
+		List<Node> connections2 = this.network.get(nodeName2);
+		
+		// Return if no Direct Routes found
+		if (connections1.isEmpty() || connections2.isEmpty()) {
+			return Constants.ERROR_ROUTE_NOT_FOUND;
+		}
+
+		Node startNode = this.nodes.get(nodeName1);
+		Node endNode = this.nodes.get(nodeName2);
+
+		if ("REPEATER".equalsIgnoreCase(startNode.getType())
+				|| "REPEATER".equalsIgnoreCase(endNode.getType())) {
+			return Constants.ERROR_ROUTE_CANNOT_BE_CALCULATED;
+		}
+		
+		return null;
 	}
 
 	/**

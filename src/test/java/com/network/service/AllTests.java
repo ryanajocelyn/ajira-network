@@ -15,7 +15,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	AddCommandTest.class,
 	ConnectCommandTest.class,
 	SetDeviceStrengthCommandTest.class,
-	InfoRouteCommandTest.class
+	InfoRouteCommandTest.class,
+	Scenario1Test.class
 })
 @RunWith(Suite.class)
 public class AllTests {
