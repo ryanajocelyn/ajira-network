@@ -3,6 +3,7 @@
  */
 package com.network.service;
 
+import com.network.command.Device;
 import com.network.utils.Constants;
 
 /**
@@ -17,14 +18,14 @@ public class Node {
 	private String name;
 	
 	/** Node Type - Computer, Repeater */
-	private String type;
+	private Device type;
 	
 	/** Node Strength */
 	private int strength;
 	
 	public Node(String nodeName, String type) {
 		this.name = nodeName;
-		this.type = type;
+		this.type = Device.valueOf(type);
 		
 		this.strength = Constants.DEFAULT_DEVICE_STRENGTH;
 	}
@@ -69,14 +70,14 @@ public class Node {
 	/**
 	 * @return the type
 	 */
-	public String getType() {
+	public Device getType() {
 		return type;
 	}
 
 	/**
 	 * @param type the type to set
 	 */
-	public void setType(String type) {
+	public void setType(Device type) {
 		this.type = type;
 	}
 

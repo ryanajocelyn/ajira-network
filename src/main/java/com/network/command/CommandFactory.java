@@ -6,7 +6,8 @@ package com.network.command;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.network.service.CommNetwork;
+import com.network.exception.CommandNotFoundException;
+import com.network.service.Network;
 
 /**
  * Factory Pattern
@@ -17,7 +18,7 @@ import com.network.service.CommNetwork;
 public class CommandFactory {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Command getCommand(String command, CommNetwork commNetwork) {
+	public static Command getCommand(String command, Network commNetwork) throws CommandNotFoundException {
 		Command retCmd = null;
 		String[] commandTokens = command.split(" ");
 		if (commandTokens != null && commandTokens.length > 0) {
@@ -45,6 +46,7 @@ public class CommandFactory {
 						| InvocationTargetException | SecurityException 
 						| NoSuchMethodException e) {
 					System.err.println("Error in Creating command: %s" + e.getMessage());
+					throw new CommandNotFoundException("Error Creating Command", e);
 				}
 			}
 		}

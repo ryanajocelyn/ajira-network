@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.network.NetworkCmdExecutor;
+import com.network.CommandProcessor;
 import com.network.utils.Constants;
 
 /**
@@ -37,7 +37,7 @@ public class Scenario1Test {
 	
 	private String expected;
 	
-	private static CommNetwork commNetwork;
+	private static Network commNetwork;
 	
 	public Scenario1Test(String command, String expected) {
 		this.command = command;
@@ -86,12 +86,12 @@ public class Scenario1Test {
 	
 	@BeforeClass
 	public static void setup() {
-		commNetwork = new CommNetwork();
+		commNetwork = new Network();
 	}
 	
 	@Test
 	public void testScenario1() {
-		NetworkCmdExecutor executor = new NetworkCmdExecutor();
+		CommandProcessor executor = new CommandProcessor();
 		
 		String status = executor.runCommand(command, commNetwork);
 		

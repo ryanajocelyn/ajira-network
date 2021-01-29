@@ -5,7 +5,7 @@ package com.network;
 
 import java.util.Scanner;
 
-import com.network.service.CommNetwork;
+import com.network.service.Network;
 
 /**
  * @author ABIJEETH
@@ -17,9 +17,9 @@ public class NetworkMain {
 		Scanner scanner = new Scanner(System.in);
 		
 		// Local Communication Network
-		CommNetwork commNetwork = new CommNetwork();
+		Network commNetwork = new Network();
 		try {
-			NetworkCmdExecutor network = new NetworkCmdExecutor();
+			CommandProcessor network = new CommandProcessor();
 
 			// Scan and Run the Network Commands
 			while (true) {

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import com.network.command.Device;
 import com.network.utils.Constants;
 
 /**
@@ -17,13 +18,13 @@ import com.network.utils.Constants;
  * @author ABIJEETH
  *
  */
-public class CommNetwork {
+public class Network {
 
 	private Map<String, List<Node>> network;
 	
 	private Map<String, Node> nodes;
 	
-	public CommNetwork() {
+	public Network() {
 		this.network = new HashMap<String, List<Node>>();
 		this.nodes = new HashMap<String, Node>();
 	}
@@ -147,8 +148,8 @@ public class CommNetwork {
 		Node startNode = this.nodes.get(nodeName1);
 		Node endNode = this.nodes.get(nodeName2);
 
-		if ("REPEATER".equalsIgnoreCase(startNode.getType())
-				|| "REPEATER".equalsIgnoreCase(endNode.getType())) {
+		if (Device.REPEATER.equals(startNode.getType())
+				|| Device.REPEATER.equals(endNode.getType())) {
 			return Constants.ERROR_ROUTE_CANNOT_BE_CALCULATED;
 		}
 		
@@ -224,7 +225,7 @@ public class CommNetwork {
 	 * @return
 	 */
 	private int getRemainingStrength(Node child, int remStrength) {
-		if ("REPEATER".equalsIgnoreCase(child.getType())) {
+		if (Device.REPEATER.equals(child.getType())) {
 			return remStrength * 2;
 		}
 		

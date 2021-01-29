@@ -4,7 +4,7 @@
 package com.network.command.impl;
 
 import com.network.command.Command;
-import com.network.service.CommNetwork;
+import com.network.service.Network;
 import com.network.utils.Constants;
 
 /**
@@ -17,7 +17,7 @@ public abstract class BaseCommand implements Command {
 
 	protected String[] commandTokens;
 	
-	protected CommNetwork network;
+	protected Network network;
 	
 	public String run() {
 		commandTokens = command.split(" ");
@@ -36,14 +36,14 @@ public abstract class BaseCommand implements Command {
 	/**
 	 * @return the network
 	 */
-	public CommNetwork getNetwork() {
+	public Network getNetwork() {
 		return network;
 	}
 
 	/**
 	 * @param network the network to set
 	 */
-	public void setNetwork(CommNetwork network) {
+	public void setNetwork(Network network) {
 		this.network = network;
 	}
 

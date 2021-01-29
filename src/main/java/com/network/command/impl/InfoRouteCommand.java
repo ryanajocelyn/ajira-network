@@ -6,7 +6,7 @@ package com.network.command.impl;
 import java.util.Arrays;
 import java.util.List;
 
-import com.network.service.CommNetwork;
+import com.network.service.Network;
 import com.network.utils.Constants;
 
 /**
@@ -15,7 +15,7 @@ import com.network.utils.Constants;
  */
 public class InfoRouteCommand extends BaseCommand {
 
-	public InfoRouteCommand(CommNetwork network) {
+	public InfoRouteCommand(Network network) {
 		this.network = network;
 	}
 	

@@ -3,7 +3,10 @@
  */
 package com.network.command.impl;
 
-import com.network.service.CommNetwork;
+import org.apache.commons.lang3.EnumUtils;
+
+import com.network.command.Device;
+import com.network.service.Network;
 
 /**
  * Add Command 
@@ -13,7 +16,7 @@ import com.network.service.CommNetwork;
  */
 public class AddCommand extends BaseCommand {
 
-	public AddCommand(CommNetwork network) {
+	public AddCommand(Network network) {
 		this.network = network;
 	}
 	
@@ -39,8 +42,7 @@ public class AddCommand extends BaseCommand {
 			String networkType = commandTokens[1];
 			String nodeName = commandTokens[2];
 			
-			if ( ("COMPUTER".equalsIgnoreCase(networkType)
-					|| "REPEATER".equalsIgnoreCase(networkType) )
+			if ( ( EnumUtils.isValidEnum(Device.class, networkType) )
 					&& (nodeName != null && nodeName.length() > 0) ) {
 				isValid = true;
 			} 

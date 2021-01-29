@@ -29,7 +29,7 @@ Following design patterns are considered
 
 Main code implementation can be found in 
 
-<code>com.network.service.CommNetwork.java</code>
+<code>com.network.service.Network.java</code>
 
 ### Test Suite class
 

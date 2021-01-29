@@ -3,7 +3,8 @@
  */
 package com.network.command.impl;
 
-import com.network.service.CommNetwork;
+import com.network.command.Device;
+import com.network.service.Network;
 import com.network.service.Node;
 import com.network.utils.Constants;
 
@@ -13,7 +14,7 @@ import com.network.utils.Constants;
  */
 public class SetDeviceStrengthCommand extends BaseCommand {
 
-	public SetDeviceStrengthCommand(CommNetwork network) {
+	public SetDeviceStrengthCommand(Network network) {
 		this.network = network;
 	}
 	
@@ -44,7 +45,7 @@ public class SetDeviceStrengthCommand extends BaseCommand {
 		
 		Node node = network.searchNode(commandTokens[1]);
 		if (node != null) {
-			if ("COMPUTER".equalsIgnoreCase(node.getType())) {
+			if (Device.COMPUTER.equals(node.getType())) {
 				node.setStrength(Integer.parseInt(commandTokens[2]));
 
 				retVal = Constants.SUCCESS_SUCCESSFULLY_DEFINED_STRENGTH;
