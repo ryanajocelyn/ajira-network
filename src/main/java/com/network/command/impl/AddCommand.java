@@ -5,7 +5,7 @@ package com.network.command.impl;
 
 import org.apache.commons.lang3.EnumUtils;
 
-import com.network.command.Device;
+import com.network.command.DeviceType;
 import com.network.service.Network;
 
 /**
@@ -42,7 +42,7 @@ public class AddCommand extends BaseCommand {
 			String networkType = commandTokens[1];
 			String nodeName = commandTokens[2];
 			
-			if ( ( EnumUtils.isValidEnum(Device.class, networkType) )
+			if ( ( EnumUtils.isValidEnum(DeviceType.class, networkType) )
 					&& (nodeName != null && nodeName.length() > 0) ) {
 				isValid = true;
 			} 

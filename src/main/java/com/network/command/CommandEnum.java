@@ -11,7 +11,8 @@ public enum CommandEnum {
 	ADD ("Add"),
 	CONNECT ("Connect"),
 	INFO_ROUTE ("InfoRoute"),
-	SET_DEVICE_STRENGTH ("SetDeviceStrength");
+	SET_DEVICE_STRENGTH ("SetDeviceStrength"),
+	SET_FIREWALL("SetFirewall");
 
 	private String command;
 	private CommandEnum(String command) {

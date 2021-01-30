@@ -10,7 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import com.network.command.Device;
+import com.network.command.Bridge;
+import com.network.command.Computer;
+import com.network.command.DeviceType;
+import com.network.command.Repeater;
 import com.network.utils.Constants;
 
 /**
@@ -35,17 +38,27 @@ public class Network {
 	 * @return
 	 */
 	public String add(String nodeName, String nodeType) {
-		Node nodeToAdd = new Node(nodeName, nodeType);
-		
 		// Duplicate Check
 		if (this.nodes.containsKey(nodeName)) {
 			return Constants.ERROR_THAT_NAME_ALREADY_EXISTS;
 		}
 		
-		// Add Node
-		this.nodes.put(nodeName, nodeToAdd);
+		Node nodeToAdd = null;
+		if (DeviceType.COMPUTER.name().equals(nodeType)) {
+			nodeToAdd = new Computer(nodeName);
+		} else if (DeviceType.REPEATER.name().equals(nodeType)) {
+			nodeToAdd = new Repeater(nodeName);
+		} else if (DeviceType.BRIDGE.name().equals(nodeType)) {
+			nodeToAdd = new Bridge(nodeName);
+		}
 		
-		return String.format(Constants.SUCCESS_SUCCESSFULLY_ADDED_NODE, nodeName);
+		if (nodeToAdd != null) {
+			// Add Node
+			this.nodes.put(nodeName, nodeToAdd);
+			return String.format(Constants.SUCCESS_SUCCESSFULLY_ADDED_NODE, nodeName);
+		}
+	
+		return Constants.ERROR_INVALID_COMMAND_SYNTAX;
 	}
 
 	public boolean hasNodes(List<String> nodesToConnect) {
@@ -120,10 +133,13 @@ public class Network {
 			infoRoutesPath.push(startNode);
 		}
 		
+		StringBuilder message = new StringBuilder(nodeName1);
 		// Return the Path or Route not found
-		String routePath = getRoute(infoRoutesPath);
+		String routePath = getRoute(infoRoutesPath, message);
 		routePath = "".equalsIgnoreCase(routePath)? Constants.ERROR_ROUTE_NOT_FOUND : routePath;
-				
+		
+		System.out.println(message);
+		
 		return routePath;
 	}
 
@@ -146,8 +162,8 @@ public class Network {
 			return Constants.ERROR_ROUTE_NOT_FOUND;
 		}
 
-		if (Device.REPEATER.equals(startNode.getType())
-				|| Device.REPEATER.equals(endNode.getType())) {
+		if (DeviceType.REPEATER.equals(startNode.getType())
+				|| DeviceType.REPEATER.equals(endNode.getType())) {
 			return Constants.ERROR_ROUTE_CANNOT_BE_CALCULATED;
 		}
 		
@@ -156,11 +172,12 @@ public class Network {
 
 	/**
 	 * @param infoRoutes
+	 * @param message 
 	 * @return
 	 */
-	private String getRoute(Stack<Node> infoRoutes) {
+	private String getRoute(Stack<Node> infoRoutes, StringBuilder message) {
 		return infoRoutes.stream()
-				.map(irNode -> irNode.getName())
+				.map(irNode -> irNode.getName() )
 				.reduce("", (accum, route) -> {
 					String separator = accum.length() > 0? " -> ": "";
 					return accum + separator + route;
@@ -263,7 +280,7 @@ public class Network {
 		}
 		
 		// Return the Path or Route not found
-		String routePath = getRoute(infoRoutesPath);
+		String routePath = getRoute(infoRoutesPath, null);
 		routePath = "".equalsIgnoreCase(routePath)? Constants.ERROR_ROUTE_NOT_FOUND : routePath;
 				
 		return routePath;
@@ -310,7 +327,7 @@ public class Network {
 	 * @return
 	 */
 	private int getRemainingStrength(Node child, int remStrength) {
-		if (Device.REPEATER.equals(child.getType())) {
+		if (DeviceType.REPEATER.equals(child.getType())) {
 			return remStrength * 2;
 		}
 		

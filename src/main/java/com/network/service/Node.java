@@ -6,7 +6,8 @@ package com.network.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.network.command.Device;
+import com.network.command.DeviceType;
+import com.network.command.NodeParams;
 import com.network.utils.Constants;
 
 /**
@@ -15,23 +16,26 @@ import com.network.utils.Constants;
  * @author ABIJEETH
  *
  */
-public class Node {
+public abstract class Node {
 
 	/** Node Name */
 	private String name;
 	
 	/** Node Type - Computer, Repeater */
-	private Device type;
+	private DeviceType type;
 	
 	/** Node Strength */
 	private int strength;
 	
 	private List<Node> children;
 	
-	public Node(String nodeName, String type) {
+	private List<Node> blocked;
+	
+	public abstract NodeParams transform(NodeParams param);
+	
+	public Node(String nodeName, DeviceType type) {
 		this.name = nodeName;
-		this.type = Device.valueOf(type);
-		
+		this.type = type;
 		this.strength = Constants.DEFAULT_DEVICE_STRENGTH;
 		this.children = new ArrayList<Node>();
 	}
@@ -40,6 +44,14 @@ public class Node {
 		this (nodeName, null);
 	}
 
+	public void addBlockedNode(Node blockedNode) {
+		if (blocked == null) {
+			blocked = new ArrayList<Node>();
+		}
+		
+		blocked.add(blockedNode);
+	}
+	
 	@Override
 	public int hashCode() {
 		return name.hashCode();
@@ -74,20 +86,6 @@ public class Node {
 	}
 
 	/**
-	 * @return the type
-	 */
-	public Device getType() {
-		return type;
-	}
-
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(Device type) {
-		this.type = type;
-	}
-
-	/**
 	 * @return the strength
 	 */
 	public int getStrength() {
@@ -118,5 +116,33 @@ public class Node {
 	 */
 	public void setChildren(List<Node> children) {
 		this.children = children;
+	}
+
+	/**
+	 * @return the blocked
+	 */
+	public List<Node> getBlocked() {
+		return blocked;
+	}
+
+	/**
+	 * @param blocked the blocked to set
+	 */
+	public void setBlocked(List<Node> blocked) {
+		this.blocked = blocked;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public DeviceType getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(DeviceType type) {
+		this.type = type;
 	}
 }

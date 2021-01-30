@@ -3,7 +3,6 @@
  */
 package com.network.command.impl;
 
-import com.network.command.DeviceType;
 import com.network.service.Network;
 import com.network.service.Node;
 import com.network.utils.Constants;
@@ -12,9 +11,9 @@ import com.network.utils.Constants;
  * @author ABIJEETH
  *
  */
-public class SetDeviceStrengthCommand extends BaseCommand {
+public class SetFirewallCommand extends BaseCommand {
 
-	public SetDeviceStrengthCommand(Network network) {
+	public SetFirewallCommand(Network network) {
 		this.network = network;
 	}
 	
@@ -26,11 +25,7 @@ public class SetDeviceStrengthCommand extends BaseCommand {
 		boolean isValid = false;
 		
 		if (commandTokens != null && commandTokens.length == 3) {
-			String deviceStrength = commandTokens[2];
-			
-			if (deviceStrength != null && deviceStrength.matches("[0-9]+")) {
-				isValid = true;
-			}
+			isValid = true;
 		}
 		
 		return isValid;
@@ -43,15 +38,10 @@ public class SetDeviceStrengthCommand extends BaseCommand {
 	protected String execute() {
 		String retVal = null;
 		
-		Node node = network.searchNode(commandTokens[1]);
-		if (node != null) {
-			if (DeviceType.COMPUTER.equals(node.getType())) {
-				node.setStrength(Integer.parseInt(commandTokens[2]));
-
-				retVal = Constants.SUCCESS_SUCCESSFULLY_DEFINED_STRENGTH;
-			} else {
-				retVal = Constants.ERROR_CANNOT_SET_STRENGTH_TO_REPEATER;
-			}
+		Node node1 = network.searchNode(commandTokens[1]);
+		Node node2 = network.searchNode(commandTokens[2]);
+		if (node1 != null && node2 != null) {
+			node2.addBlockedNode(node1);
 		} else {
 			retVal = String.format(Constants.ERROR_NODE_DOESNOT_EXIST_STRENGTH, 
 					commandTokens[1]);

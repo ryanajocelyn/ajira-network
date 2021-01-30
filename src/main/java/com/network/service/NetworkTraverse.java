@@ -1,15 +1,16 @@
 package com.network.service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
-import com.network.command.Device;
+import com.network.command.NodeParams;
 
 public class NetworkTraverse {
 
 	private Stack<Node> infoRoutes; 
-	private List<String> visitedNodes;
+	private Set<String> visitedNodes;
 	private boolean routeMatched = false;
 	
 	private Node startNode; 
@@ -20,13 +21,17 @@ public class NetworkTraverse {
 		this.endNode = endNode;
 		
 		infoRoutes = new Stack<Node>();
-		visitedNodes = new ArrayList<String>();
+		visitedNodes = new HashSet<String>();
 		routeMatched = false;
 	}
 	
 	public void startTraversal() {
 		
-		infoRouteDFS(this.startNode, this.startNode.getStrength());
+		NodeParams params = new NodeParams();
+		params.setStrength(this.startNode.getStrength());
+		params.setMessage(this.startNode.getName());
+		
+		NodeParams newParam = infoRouteDFS(this.startNode, params);
 	}
 	
 	/**
@@ -37,18 +42,19 @@ public class NetworkTraverse {
 	 * @param currNode
 	 * @param endNode
 	 * @param remStrength
+	 * @return 
 	 */
-	private void infoRouteDFS(Node currNode, int remStrength) {
+	private NodeParams infoRouteDFS(Node currNode, NodeParams param) {
 		// Strength check based on Node types
-		if (remStrength <= 0) {
-			return;
+		if (param.getStrength() <= 0) {
+			return null;
 		}
 
 		infoRoutes.push(currNode);
 		
 		if (currNode.equals(endNode)) {
 			routeMatched = true;
-			return;
+			return param;
 		} 
 		
 		visitedNodes.add(currNode.getName());
@@ -59,23 +65,20 @@ public class NetworkTraverse {
 			
 			// Check if the child node is already visited
 			if (visitedNodes.contains(node.getName()) == false) {
-				int remainingStrength = getRemainingStrength(node, remStrength);
-		
-				// Recursively search for non visited child node
-				infoRouteDFS(node, remainingStrength);
-				if (routeMatched) return;
+				if (currNode.getBlocked() == null || currNode.getBlocked().contains(node) == false) {
+					NodeParams transformParam = node.transform(param);
+
+					// Recursively search for non visited child node
+					transformParam = infoRouteDFS(node, transformParam);
+					if (routeMatched) return transformParam;
+				}
 			}
 		}
 		
 		infoRoutes.pop();
-	}
-	
-	private int getRemainingStrength(Node child, int remStrength) {
-		if (Device.REPEATER.equals(child.getType())) {
-			return remStrength * 2;
-		}
+		visitedNodes.remove(currNode.getName());
 		
-		return remStrength - 1;
+		return null;
 	}
 
 	/**
