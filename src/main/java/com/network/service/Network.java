@@ -5,6 +5,7 @@ package com.network.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -20,12 +21,9 @@ import com.network.utils.Constants;
  */
 public class Network {
 
-	private Map<String, List<Node>> network;
-	
-	private Map<String, Node> nodes;
-	
+	public Map<String, Node> nodes;
+
 	public Network() {
-		this.network = new HashMap<String, List<Node>>();
 		this.nodes = new HashMap<String, Node>();
 	}
 	
@@ -40,13 +38,12 @@ public class Network {
 		Node nodeToAdd = new Node(nodeName, nodeType);
 		
 		// Duplicate Check
-		if (network.containsKey(nodeName)) {
+		if (this.nodes.containsKey(nodeName)) {
 			return Constants.ERROR_THAT_NAME_ALREADY_EXISTS;
 		}
 		
 		// Add Node
-		network.put(nodeName, new ArrayList<Node>());
-		nodes.put(nodeName, nodeToAdd);
+		this.nodes.put(nodeName, nodeToAdd);
 		
 		return String.format(Constants.SUCCESS_SUCCESSFULLY_ADDED_NODE, nodeName);
 	}
@@ -55,7 +52,7 @@ public class Network {
 		boolean hasAllNode = true;
 		
 		for (String conNodeName : nodesToConnect) {
-			boolean hasNode = this.network.containsKey(conNodeName);
+			boolean hasNode = this.nodes.containsKey(conNodeName);
 			if (hasNode == false) {
 				hasAllNode = false;
 				break;
@@ -77,14 +74,14 @@ public class Network {
 		Node node2 = this.nodes.get(nodeName2);
 
 		// Check for existing connection
-		List<Node> node1Network = this.network.get(nodeName1);
+		List<Node> node1Network = node1.getChildren();
 		if (node1Network.contains(node2)) {
 			return Constants.ERROR_DEVICES_ALREADY_CONNECTED;
 		}
 
 		// Create Connection - Bi directional network
 		node1Network.add(node2);
-		this.network.get(nodeName2).add(node1);
+		node2.getChildren().add(node1);
 		
 		return Constants.SUCCESS_SUCCESSFULLY_CONNECTED_NODE;
 	}
@@ -109,13 +106,14 @@ public class Network {
 			return error;
 		}
 		
-		List<String> visitedNodes = new ArrayList<String>();
-		Stack<Node> infoRoutes = new Stack<Node>();
-		Stack<Node> infoRoutesPath = new Stack<Node>();
+		NetworkTraverse traverse = new NetworkTraverse(startNode, endNode);
+		traverse.startTraversal();
+
+		Stack<Node> infoRoutesPath = traverse.getInfoRoutes();
 		
 		// Search the network for a path
-		infoRouteDFS(infoRoutesPath, infoRoutes, visitedNodes, startNode, endNode , 
-				startNode.getStrength());
+//		infoRouteDFS(infoRoutesPath, infoRoutes, visitedNodes, startNode, endNode , 
+//				startNode.getStrength());
 		
 		// Handle Same Node scenario
 		if (startNode.equals(endNode)) {
@@ -137,16 +135,16 @@ public class Network {
 	 * @return 
 	 */
 	private String canCalculateRoute(String nodeName1, String nodeName2) {
-		List<Node> connections1 = this.network.get(nodeName1);
-		List<Node> connections2 = this.network.get(nodeName2);
+		Node startNode = this.nodes.get(nodeName1);
+		Node endNode = this.nodes.get(nodeName2);
+
+		List<Node> connections1 = startNode.getChildren();
+		List<Node> connections2 = endNode.getChildren();
 		
 		// Return if no Direct Routes found
 		if (connections1.isEmpty() || connections2.isEmpty()) {
 			return Constants.ERROR_ROUTE_NOT_FOUND;
 		}
-
-		Node startNode = this.nodes.get(nodeName1);
-		Node endNode = this.nodes.get(nodeName2);
 
 		if (Device.REPEATER.equals(startNode.getType())
 				|| Device.REPEATER.equals(endNode.getType())) {
@@ -197,7 +195,7 @@ public class Network {
 		visitedNodes.add(startNode.getName());
 		
 		// Traverse the node for the matching end node
-		List<Node> snConnections = this.network.get(startNode.getName());
+		List<Node> snConnections = this.nodes.get(startNode.getName()).getChildren();
 		if (snConnections.size() > 0) {
 			
 			for (Node node : snConnections) {
@@ -217,6 +215,93 @@ public class Network {
 		infoRoutes.pop();
 	}
 	
+	public String infoRouteBFS(String nodeName1, String nodeName2) {
+		Node startNode = this.nodes.get(nodeName1);
+		Node endNode = this.nodes.get(nodeName2);
+		
+		String error = canCalculateRoute(nodeName1, nodeName2);
+		if (error != null) {
+			return error;
+		}
+		
+		List<String> visitedNodes = new ArrayList<String>();
+		Stack<Node> infoRoutes = new Stack<Node>();
+		Stack<Node> infoRoutesPath = new Stack<Node>();
+		
+		Map<String, Integer> dist = new HashMap<>();
+		Map<String, String> parent = new HashMap<>();
+		
+		// Handle Same Node scenario
+		if (startNode.equals(endNode)) {
+			infoRoutesPath.push(startNode);
+			infoRoutesPath.push(endNode);
+		} else {
+			// Search the network for a path
+			infoRouteBFS(dist, parent, visitedNodes, startNode);
+			
+			Node crawlNode = endNode;
+			infoRoutes.add(crawlNode);
+			int remStrength = startNode.getStrength();
+			do {
+				String pNode = parent.get(crawlNode.getName());
+				
+				crawlNode = this.nodes.get(pNode);
+				if (crawlNode != null) {
+					infoRoutes.add(crawlNode);
+					remStrength --;
+				}
+				
+				if (remStrength <= 0) {
+					infoRoutes.clear();
+					break;
+				}
+			} while (crawlNode != null);
+			
+			while (infoRoutes.isEmpty() == false) {
+				infoRoutesPath.push(infoRoutes.pop());
+			}
+		}
+		
+		// Return the Path or Route not found
+		String routePath = getRoute(infoRoutesPath);
+		routePath = "".equalsIgnoreCase(routePath)? Constants.ERROR_ROUTE_NOT_FOUND : routePath;
+				
+		return routePath;
+	}
+	
+	private void infoRouteBFS(Map<String, Integer> dist, Map<String, String> parent, List<String> visitedNodes,
+			Node node) {
+		
+		LinkedList<Node> queue = new LinkedList<Node>();
+		queue.add(node);
+		
+		visitedNodes.add(node.getName());
+		dist.put(node.getName(), 0);
+		parent.put(node.getName(), null);
+		
+		while (queue.isEmpty() == false) {
+			Node pNode = queue.remove();
+			
+			List<Node> children = this.nodes.get(pNode.getName()).getChildren();
+			
+			if (children != null && children.isEmpty() == false) {
+				for (Node child : children) {
+					
+					if (visitedNodes.contains(child.getName()) == false) {
+						dist.put(child.getName(), dist.get(pNode.getName()) + 1);
+						parent.put(child.getName(), pNode.getName());
+						visitedNodes.add(child.getName());
+						
+						queue.add(child);
+					}
+				}
+			}
+		}
+		
+		System.out.println(dist);
+		System.out.println(parent);
+	}
+
 	/**
 	 * Calculate the strength after each hop
 	 * 

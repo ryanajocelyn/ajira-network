@@ -3,6 +3,9 @@
  */
 package com.network.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.network.command.Device;
 import com.network.utils.Constants;
 
@@ -23,11 +26,14 @@ public class Node {
 	/** Node Strength */
 	private int strength;
 	
+	private List<Node> children;
+	
 	public Node(String nodeName, String type) {
 		this.name = nodeName;
 		this.type = Device.valueOf(type);
 		
 		this.strength = Constants.DEFAULT_DEVICE_STRENGTH;
+		this.children = new ArrayList<Node>();
 	}
 	
 	public Node(String nodeName) {
@@ -98,5 +104,19 @@ public class Node {
 	@Override
 	public String toString() {
 		return String.format("%s : %s", name, type);
+	}
+
+	/**
+	 * @return the children
+	 */
+	public List<Node> getChildren() {
+		return children;
+	}
+
+	/**
+	 * @param children the children to set
+	 */
+	public void setChildren(List<Node> children) {
+		this.children = children;
 	}
 }

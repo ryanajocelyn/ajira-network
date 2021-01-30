@@ -31,7 +31,10 @@ public class CommandProcessor {
 			
 			if (command != null) {
 				status = command.run();
-			} 
+			} else {
+				status = Constants.ERROR_INVALID_COMMAND;
+			}
+			
 		} catch (CommandNotFoundException e) {
 			status = Constants.ERROR_INVALID_COMMAND;
 			System.err.println("Error: Command not recognized: " + commandLine);

@@ -30,6 +30,22 @@ import com.network.utils.Constants;
  * @author ABIJEETH
  *
  */
+
+/**
+ *            2
+ *           A1 - A2 - A3 - A4 - A5
+ *           
+ *           A1 - A3 - A5
+ *           
+ *           A1 - A4 - A7
+ *           
+ *           
+ * 
+ * 
+ * @author ABIJEETH
+ *
+ */
+
 @RunWith(Parameterized.class)
 public class InfoRouteCommandTest {
 

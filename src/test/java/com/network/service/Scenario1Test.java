@@ -19,13 +19,13 @@ import com.network.utils.Constants;
 /**
  * Test Case for the below network
  * 
- *          A1
- *        /    \
- *      A2     A3
- *              |
- *             R1 --- A4 --- A5
- *                    |       |
- *                    A6     A7
+ *               A1
+ *             /    \
+ *            A2     A3
+ *          /   \ 
+ *        R1     A4 
+ *          \    /   
+ *            A5     
  * 
  * @author ABIJEETH
  *
@@ -72,7 +72,7 @@ public class Scenario1Test {
 			{ "CONNECT A2 A4", Constants.SUCCESS_SUCCESSFULLY_CONNECTED_NODE },
 			{ "INFO_ROUTE A1 A4", Constants.ERROR_ROUTE_NOT_FOUND },
 			{ "INFO_ROUTE A1 A5", "A1 -> A2 -> R1 -> A5" },
-			{ "INFO_ROUTE A4 A3", "A4 -> A5 -> R1 -> A2 -> A1 -> A3" },
+			{ "INFO_ROUTE A4 A3", "A4 -> A2 -> A1 -> A3" },
 			{ "INFO_ROUTE A1 A1", "A1 -> A1" },
 			{ "INFO_ROUTE A1 A6", Constants.ERROR_ROUTE_NOT_FOUND },
 			{ "INFO_ROUTE A2 R1", Constants.ERROR_ROUTE_CANNOT_BE_CALCULATED },
